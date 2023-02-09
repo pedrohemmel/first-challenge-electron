@@ -1,0 +1,22 @@
+{
+  "name": "first-challenge-electron",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pedrohemmel/first-challenge-electron.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pedrohemmel/first-challenge-electron/issues"
+  },
+  "homepage": "https://github.com/pedrohemmel/first-challenge-electron#readme",
+  "devDependencies": {
+    "electron": "^23.0.0"
+  }
+}
