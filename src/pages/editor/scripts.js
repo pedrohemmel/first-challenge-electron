@@ -9,5 +9,8 @@ ipcRenderer.on('set-file', function(event, data) {
     tltHead.innerHTML = data.name + ' | FAWE'
     tltHeader.innerHTML = data.name
     textEditor.value = data.content
-
 })
+
+function handleChangedText() {
+    ipcRenderer.send('update-content', textEditor.value)
+}

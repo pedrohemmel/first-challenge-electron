@@ -1,4 +1,6 @@
-const { app, BrowserWindow, Menu } = require('electron')
+const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron')
+const fs = require('fs')
+const path = require('path')
 
 //Global variables
 var mainWindow 
@@ -20,6 +22,10 @@ const createWindow = async () => {
     await mainWindow.loadFile('src/pages/editor/index.html')
     // mainWindow.webContents.openDevTools()
     createNewFile()
+
+    ipcMain.on('update-content', function(event, data) {
+        file.content = data
+    })
 }
 
 //Create new file
@@ -32,6 +38,64 @@ function createNewFile() {
     }
     // console.log(file)
     mainWindow.webContents.send('set-file', file)
+}
+
+function writeFile(filePath) {
+    try {
+        fs.writeFile(filePath, file.content, function(error) {
+            if (error) throw error
+
+            //Saving file
+            file.path = filePath
+            file.saved = true 
+            file.name = path.basename(filePath)
+
+            mainWindow.webContents.send('set-file', file)
+        }) 
+    } catch(e) {
+        console.log(e)
+    }
+}
+//Save the current file where the user wants
+async function saveFileAs() {
+    //Dialog
+    let dialogFile = await dialog.showSaveDialog({
+        defaultPath: file.path
+    })
+
+    //Verify if it is canceled
+    if (dialogFile.canceled) {
+        return false
+    }
+
+    writeFile(dialogFile.filePath)
+    // console.log(dialogFile)
+}
+
+//Save content even if the file is already saved or not
+function saveFile() {
+    console.log(file)
+    if (file.saved) {
+        return writeFile(file.path)
+    }
+    return saveFileAs()
+}
+
+async function openFile() {
+    let dialogFile = await dialog.showOpenDialog({
+        defaultPath: file.path
+    })
+
+    if (dialogFile.canceled) return false
+
+    mainWindow.webContents.send('set-file', file)
+
+    file = {
+        name: path.basename(dialogFile.filePaths[0]),
+        content: readFile(dialogFile.filePaths[0]),
+        saved: true,
+        path: dialogFile.filePaths[0]
+    }
 }
 
 //Template Menu
@@ -47,13 +111,22 @@ const templateMenu = [
                 }
             },
             {
-                label: 'Abrir'
+                label: 'Abrir',
+                click() {
+                    openFile()
+                }
             },
             {
-                label: 'Salvar'
+                label: 'Salvar',
+                click() {
+                    saveFile()
+                }
             },
             {
-                label: 'Salvar como'
+                label: 'Salvar como',
+                click() {
+                    saveFileAs()
+                }
             },
             {
                 label: 'Fechar',
