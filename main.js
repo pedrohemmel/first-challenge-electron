@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron')
+const { app, BrowserWindow, Menu, dialog, ipcMain, shell } = require('electron')
 const fs = require('fs')
 const path = require('path')
 
@@ -81,6 +81,15 @@ function saveFile() {
     return saveFileAs()
 }
 
+function readFile(filePath) {
+    try {
+        return fs.readFileSync(filePath, 'utf8')
+    } catch(e) {
+        console.log(e)
+        return ''
+    }
+}
+
 async function openFile() {
     let dialogFile = await dialog.showOpenDialog({
         defaultPath: file.path
@@ -96,6 +105,8 @@ async function openFile() {
         saved: true,
         path: dialogFile.filePaths[0]
     }
+
+    mainWindow.webContents.send('set-file', file)
 }
 
 //Template Menu
@@ -106,24 +117,28 @@ const templateMenu = [
         submenu: [
             {
                 label: 'Novo',
+                accelerator: 'CmdOrCtrl+N',
                 click() {
                     createNewFile()
                 }
             },
             {
                 label: 'Abrir',
+                accelerator: 'CmdOrCtrl+O',
                 click() {
                     openFile()
                 }
             },
             {
                 label: 'Salvar',
+                accelerator: 'CmdOrCtrl+S',
                 click() {
                     saveFile()
                 }
             },
             {
                 label: 'Salvar como',
+                accelerator: 'CmdOrCtrl+Shift+S',
                 click() {
                     saveFileAs()
                 }
@@ -134,6 +149,47 @@ const templateMenu = [
                 role:process.platform === 'darwin' ? 'close' : 'quit'
             }
         ]
+    },
+    {
+        label: 'Editar',
+        submenu: [
+            {
+                label: 'Desfazer',
+                role: 'undo'
+            },
+            {
+                label: 'Refazer',
+                role: 'redo'
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Copiar',
+                role: 'copy'
+            },
+            {
+
+                label: 'Cortar',
+                role: 'cut'
+            },
+            {
+                label: 'Colar',
+                role: 'Paste'
+            }
+        ]
+    },
+    {
+        label: 'Ajuda',
+        submenu: [
+            {
+                label: 'teste',
+                click() {
+                    shell.openExternal('https://stackoverflow.com/questions/31790677/how-to-check-if-a-string-contains-an-int-swift')
+                }
+            }
+        ]
+        
     }
 ]
 
