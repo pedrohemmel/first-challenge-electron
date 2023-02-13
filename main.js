@@ -6,7 +6,6 @@ const path = require('path')
 var mainWindow 
 var file = {}
 
-
 //--Functions here
 //Main Window
 const createWindow = async () => {
@@ -71,7 +70,6 @@ async function saveFileAs() {
     writeFile(dialogFile.filePath)
     // console.log(dialogFile)
 }
-
 //Save content even if the file is already saved or not
 function saveFile() {
     console.log(file)
@@ -81,6 +79,7 @@ function saveFile() {
     return saveFileAs()
 }
 
+//Reading and opening the selected file
 function readFile(filePath) {
     try {
         return fs.readFileSync(filePath, 'utf8')
@@ -89,7 +88,6 @@ function readFile(filePath) {
         return ''
     }
 }
-
 async function openFile() {
     let dialogFile = await dialog.showOpenDialog({
         defaultPath: file.path
@@ -183,9 +181,9 @@ const templateMenu = [
         label: 'Ajuda',
         submenu: [
             {
-                label: 'teste',
+                label: 'stackoverflow',
                 click() {
-                    shell.openExternal('https://stackoverflow.com/questions/31790677/how-to-check-if-a-string-contains-an-int-swift')
+                    shell.openExternal('https://stackoverflow.com')
                 }
             }
         ]

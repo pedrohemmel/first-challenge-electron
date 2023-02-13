@@ -10,10 +10,26 @@ html, body {
     font-family: sans-serif;
 }
 
+#divTltHeader {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    background-color: #07738e;
+}
+
 #tltHeader {
     color: #222526;
 
-    margin: 5px;
+    background-color: #fff;
+    border-radius: 20px;
+
+    margin: 5px 0;
+    padding: 5px;
+
+    display: inline-block;
 }
 
 #textEditor {
